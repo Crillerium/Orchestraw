@@ -71,7 +71,7 @@ def download():
         
     print(f"文件元数据修改成功并保存为：{filename}")
 
-if __name__ == '__main__':
+def main():
     try:
         music_list = search_for_songs()
         download()
@@ -81,4 +81,6 @@ if __name__ == '__main__':
         print('脚本已退出')
     except Exception as e:
         print('脚本意外退出: ',e)
-    
+
+if __name__ == '__main__':
+    main()
