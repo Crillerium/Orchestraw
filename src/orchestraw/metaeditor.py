@@ -55,7 +55,7 @@ def set_song_metadata(filename, song_name, singer, album, cover):
     )
     audio.save()  # 记得要保存
 
-def download():
+def download(music_list):
     order = int(input('请输入序号:'))
     with requests.get('https://tenapi.cn/v2/songinfo',params={'id': music_list[order][0]}) as res:
         # 确保请求成功
@@ -74,7 +74,7 @@ def download():
 def main():
     try:
         music_list = search_for_songs()
-        download()
+        download(music_list)
     except KeyboardInterrupt:
         print('脚本已退出')
     except EOFError:

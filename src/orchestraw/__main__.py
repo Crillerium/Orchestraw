@@ -55,7 +55,7 @@ def set_song_metadata(filename, song_name, singer, album, cover):
     )
     audio.save()  # 记得要保存
 
-def download():
+def download(music_list):
     order = int(input('请输入序号:'))
     url = "https://api.csm.sayqz.com/song/url"
     params = {'id': music_list[order][0]}
@@ -83,13 +83,13 @@ def download():
 def main():
     try:
         music_list = search_for_songs()
-        download()
+        download(music_list)
     except KeyboardInterrupt:
         print('脚本已退出')
     except EOFError:
         print('脚本已退出')
-    except Exception as e:
-        print('脚本意外退出: ',e)
+#    except Exception as e:
+#        print('脚本意外退出: ',e)
 
 if __name__ == '__main__':
     main()
