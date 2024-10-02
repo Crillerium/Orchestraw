@@ -60,7 +60,7 @@ def detect_lyric(id,filename):
     if response.status_code == 200:
         data = response.json()
         if "lrc" in data and "lyric" in data['lrc']:
-            opt = input("检测到此歌曲存在歌词，是否下载？[Y/n]")
+            opt = input("检测到此歌曲存在歌词，是否下载？[y/N]")
             if opt == "y" or opt == "Y":
                 with open(filename+".lrc","w") as f:
                     f.write(data['lrc']['lyric'].replace("\n","\n"))

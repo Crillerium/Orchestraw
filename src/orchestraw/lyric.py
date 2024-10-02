@@ -60,7 +60,7 @@ def detect_lyric(id,filename):
     if response.status_code == 200:
         data = response.json()
         if "lrc" in data and "lyric" in data['lrc']:
-            opt = input("确认下载此歌曲的歌词吗？[Y/n]")
+            opt = input("确认下载此歌曲的歌词吗？[y/N]")
             if opt == "y" or opt == "Y":
                 with open(filename+".lrc","w") as f:
                     f.write(data['lrc']['lyric'].replace("\n","\n"))
@@ -71,7 +71,6 @@ def detect_lyric(id,filename):
 def get_filename(filename):
     # 检查文件名是否以.mp3结尾
     if filename.endswith('.mp3'):
-        # 替换扩展名为.lrc
         new_filename = filename[:-4]
         return new_filename
 

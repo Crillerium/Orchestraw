@@ -55,12 +55,49 @@ def set_song_metadata(filename, song_name, singer, album, cover):
     )
     audio.save()  # 记得要保存
 
+def set_song_metadata_by_hand():
+    #获取音乐内容
+    audio = ID3(sys.argv[1])
+    #print(audio)
+    audio.update_to_v23()  # 把可能存在的旧版本升级为2.3
+    pic = input('请输入本地封面路径(留空则不更改):')
+    if pic != "":
+        with open(pic,"rb") as f:
+            cover = f.read()
+        audio['APIC'] = APIC(  # 插入专辑图片
+            encoding=0,
+            mime='image/jpeg',
+            type=3,
+            # desc=u'Cover',
+            data=cover
+        )
+    song_name = input('请输入歌曲名称(留空则不更改):')
+    if song_name != "":
+        audio['TIT2'] = TIT2(  # 插入歌名
+            encoding=3,
+            text=song_name
+        )
+    singer = input("请输入歌手名称(留空则不更改):")
+    if  singer != "":
+        audio['TPE1'] = TPE1(  # 插入第一演奏家、歌手、等
+            encoding=3,
+            text=singer
+        )
+    album = input("请输入专辑名称(留空则不更改):")
+    if album != "":
+        audio['TALB'] = TALB(  # 插入专辑名称
+            encoding=3,
+            text=album
+        )
+    audio.save()  # 记得要保存
+    print("歌曲元数据信息修改完毕")
+
 def detect_lyric(id,filename):
     response = requests.get("https://api.csm.sayqz.com/lyric",params={"id":id})
     if response.status_code == 200:
         data = response.json()
         if "lrc" in data and "lyric" in data['lrc']:
-            opt = input("检测到此歌曲存在歌词，是否下载？[Y/n]")
+            opt = input("检测到此歌曲存在歌词，是否下载？[y/N]")
             if opt == "y" or opt == "Y":
                 with open(filename+".lrc","w") as f:
                     f.write(data['lrc']['lyric'].replace("\n","\n"))
@@ -69,7 +106,6 @@ def detect_lyric(id,filename):
 def get_filename(filename):
     # 检查文件名是否以.mp3结尾
     if filename.endswith('.mp3'):
-        # 替换扩展名为.lrc
         new_filename = filename[:-4]
         return new_filename
 
@@ -92,8 +128,13 @@ def download(music_list):
 def main():
     try:
         print("欢迎使用Orchestraw 元数据编辑器!")
-        music_list = search_for_songs()
-        download(music_list)
+        print("请选择元数据来源:\n[1]网易云音乐\n[2]手动输入")
+        opt = input("请输入序号: ")
+        if opt == "1":
+            music_list = search_for_songs()
+            download(music_list)
+        elif opt == "2":
+            set_song_metadata_by_hand()
     except KeyboardInterrupt:
         print('脚本已退出')
     except EOFError:
