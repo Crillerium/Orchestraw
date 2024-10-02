@@ -32,7 +32,7 @@ def search_for_songs():
 def set_song_metadata(filename, song_name, singer, album, cover):
     #获取音乐内容
     audio = ID3(filename)
-    print(audio)
+    #print(audio)
     audio.update_to_v23()  # 把可能存在的旧版本升级为2.3
     audio['APIC'] = APIC(  # 插入专辑图片
         encoding=0,
@@ -55,6 +55,17 @@ def set_song_metadata(filename, song_name, singer, album, cover):
     )
     audio.save()  # 记得要保存
 
+def detect_lyric(id,filename):
+    response = requests.get("https://api.csm.sayqz.com/lyric",params={"id":id})
+    if response.status_code == 200:
+        data = response.json()
+        if "lrc" in data and "lyric" in data['lrc']:
+            opt = input("检测到此歌曲存在歌词，是否下载？[Y/n]")
+            if opt == "y" or opt == "Y":
+                with open(filename+".lrc","w") as f:
+                    f.write(data['lrc']['lyric'].replace("\n","\n"))
+                    print(f"歌词已下载并保存为：{filename}.lrc")
+
 def download(music_list):
     order = int(input('请输入序号:'))
     url = "https://api.csm.sayqz.com/song/url"
@@ -68,6 +79,7 @@ def download(music_list):
                 f.write(res.content)
         else:
             print('音频下载失败')
+            sys.exit()
     with requests.get('https://tenapi.cn/v2/songinfo',params={'id': music_list[order][0]}) as res:
         # 确保请求成功
         if res.status_code == 200:
@@ -76,9 +88,10 @@ def download(music_list):
                 cover = r.content
         else:
             print('封面下载失败')
+            sys.exit()
     set_song_metadata(filename+'.mp3', music_list[order][1], music_list[order][2], music_list[order][3], cover)
-        
     print(f"文件已下载并保存为：{filename}.mp3")
+    detect_lyric(music_list[order][0],filename)
 
 def main():
     try:

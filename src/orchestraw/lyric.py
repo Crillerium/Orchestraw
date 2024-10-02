@@ -60,11 +60,13 @@ def detect_lyric(id,filename):
     if response.status_code == 200:
         data = response.json()
         if "lrc" in data and "lyric" in data['lrc']:
-            opt = input("检测到此歌曲存在歌词，是否下载？[Y/n]")
+            opt = input("确认下载此歌曲的歌词吗？[Y/n]")
             if opt == "y" or opt == "Y":
                 with open(filename+".lrc","w") as f:
                     f.write(data['lrc']['lyric'].replace("\n","\n"))
                     print(f"歌词已下载并保存为：{filename}.lrc")
+        else:
+            print("抱歉，此歌曲暂无歌词")
 
 def get_filename(filename):
     # 检查文件名是否以.mp3结尾
@@ -75,23 +77,12 @@ def get_filename(filename):
 
 def download(music_list):
     order = int(input('请输入序号:'))
-    with requests.get('https://tenapi.cn/v2/songinfo',params={'id': music_list[order][0]}) as res:
-        # 确保请求成功
-        if res.status_code == 200:
-            with requests.get(res.json()['data']['cover']) as r:
-                global cover
-                cover = r.content
-        else:
-            print('封面下载失败')
-            sys.exit()
     filename = sys.argv[1]
-    set_song_metadata(filename, music_list[order][1], music_list[order][2], music_list[order][3], cover)
-    print(f"文件元数据修改成功并保存为：{filename}")
     detect_lyric(music_list[order][0],get_filename(filename))
 
 def main():
     try:
-        print("欢迎使用Orchestraw 元数据编辑器!")
+        print("欢迎使用Orchestraw 歌词下载器!")
         music_list = search_for_songs()
         download(music_list)
     except KeyboardInterrupt:

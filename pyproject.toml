@@ -4,11 +4,11 @@ build-backend = "hatchling.build"
 
 [project]
 name = "Orchestraw"
-version = "2.2.0"
+version = "2.3.0"
 authors = [
   { name="Crillerium", email="crillerium@outlook.com" },
 ]
-description = "Orchestraw which downloads NCM music with metadata"
+description = "Orchestraw which downloads NCM music with metadata and lyric"
 readme = "README.md"
 requires-python = ">=3.8"
 classifiers = [
@@ -24,6 +24,7 @@ dependencies = [
 [project.scripts]
 ost = "orchestraw.__main__:main"
 ostm = "orchestraw.metaeditor:main"
+ostl = "orchestraw.lyric:main"
 
 [project.urls]
 Homepage = "https://github.com/crillerium/orchestraw"
